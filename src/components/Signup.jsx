@@ -13,33 +13,25 @@ import {
   import { useAuth } from '../Auth';
 import { toast } from "react-hot-toast";
 
-
   const Signup = () => {
 
     const navigate = useNavigate();
     const [name, setName] = useState();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const {signUp, currentUser} = useAuth();
+    const {signUp, updateName} = useAuth();
 
   
     const handleRegister = (e) => {
       e.preventDefault();
-      setError("");
-      setLoading(true);
-      signUp(email, password)
+      signUp(email, password, name)
         .then(() => {
-          console.log(currentUser);
+          updateName(name);
           navigate("/diary");
         })
         .catch((error) => {
           toast.error(error.message);
         })
-        .finally(() => {
-          setLoading(false);
-        });
     };
  
     useEffect(() => {

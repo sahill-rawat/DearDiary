@@ -27,7 +27,6 @@ const Header = () => {
       navigate('/');
     })
   };
-  const isAuthenticated = false;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -56,40 +55,11 @@ const Header = () => {
           <DrawerCloseButton />
           <DrawerHeader color='#FBCD44' bg='white'>DearDiary</DrawerHeader>
           <DrawerBody bg='white'>
-            <VStack alignItems={"flex-start"}>
-              <Link to={"/"}>
-                <Button
-                  as="button"
-                  onClick={onClose}
-                  variant={"ghost"}
-                  bg='#FBCD44'
-                >
-                  Home
-                </Button>
-              </Link>
-              {
-                currentUser && (
-                <Link to={"/diary"}>
-                <Button
-                  onClick={onClose}
-                  variant={"ghost"}
-                  bg='#FBCD44'
-                >
-                  My Diary
-                </Button>
-              </Link>
-                )
-              }
-              
-            </VStack>
-
-            {currentUser ? (
+            
+          {currentUser ? (
               <HStack
-                pos={"absolute"}
-                bottom="10"
-                left="0"
                 width={"full"}
-                justifyContent="space-evenly"
+                justifyContent="space-between"
               >
                 <Link to={"/logout"}>
                 <Button
@@ -118,11 +88,8 @@ const Header = () => {
               </HStack>
             ) : (
               <HStack
-                pos={"absolute"}
-                bottom="10"
-                left="0"
                 width={"full"}
-                justifyContent="space-evenly"
+                justifyContent="space-between"
               >
                 <Link to={"/login"}>
                   <Button onClick={onClose} bg='#FBCD44'>
@@ -141,6 +108,34 @@ const Header = () => {
                 </Link>
               </HStack>
             )}
+            <VStack mt='5vh' alignItems='flex-start'>
+              <Link to={"/"}>
+                <Button
+                  as="button"
+                  onClick={onClose}
+                  variant={"ghost"}
+                  bg='#FBCD44'
+                >
+                  Home
+                </Button>
+              </Link>
+              {
+                currentUser && (
+                <Link to={"/diary"}>
+                <Button
+                  onClick={onClose}
+                  variant={"ghost"}
+                  bg='#FBCD44'
+                >
+                  My Diary
+                </Button>
+              </Link>
+              
+                )
+              }
+              
+            </VStack>
+
           </DrawerBody>
         </DrawerContent>
       </Drawer>

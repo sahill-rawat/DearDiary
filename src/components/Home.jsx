@@ -1,9 +1,12 @@
 import React from 'react';
-import { Box, Button, Input, VStack, Text, Heading } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Heading } from "@chakra-ui/react";
 import bg from '../images/back.jpg';
 import MetaData from './Metadata';
+import { Link } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
 
 const Home = () => {
+  const {currentUser} = getAuth();
   return (
     <Box h='100vh' w="100vw">
       <MetaData title='DearDiary' />
@@ -22,15 +25,8 @@ const Home = () => {
             <Heading fontSize={"6xl"}> Dear Diary </Heading>
             <Text fontSize="2xl">Write Anywhere. Read Anytime.</Text>
         
-            <VStack>
-              <Input
-                bg={"white"}
-                w="70vw"
-                color="black"
-                m="4vmin"
-                type="text"
-                placeholder="Email address..."
-              />
+            <VStack mt='5vh'>
+              <Link to={{currentUser} ? '/diary' : '/signup'}>
               <Button
                 variant={"solid"}
                 color="white"
@@ -39,6 +35,7 @@ const Home = () => {
               >
                 Get Started
               </Button>
+              </Link>
             </VStack>
           </Box>
         </VStack>

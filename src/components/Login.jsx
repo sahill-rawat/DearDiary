@@ -16,23 +16,18 @@ import { toast } from 'react-hot-toast';
   
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
   
   
     const loginSubmit = (e) => {
       e.preventDefault();
-      setLoading(true);
       login(email, password).then(()=>{
         navigate('/diary');
         toast.success('Logged In successfully');
       }).catch((error) => {
         toast.error(error.message);
       })
-      .finally(() => {
-        setLoading(false);
-      });
     };
   
   

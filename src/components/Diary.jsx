@@ -4,10 +4,8 @@ import {
   Button,
   Grid,
   VStack,
-  Text,
-  Flex,
+  Text, 
   HStack,
-  useBreakpointValue, // Import useBreakpointValue hook
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import MetaData from "./Metadata";
@@ -20,7 +18,6 @@ const Diary = () => {
   const [entries, setEntries] = useState([]);
   const { fetchDiaryEntries } = useStore([]);
   const { currentUser } = useAuth();
-  const isSmallScreen = useBreakpointValue({ base: true, sm: false });
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -33,7 +30,7 @@ const Diary = () => {
     };
 
     fetchEntries();
-  }, [currentUser.uid]);
+  }, [currentUser.uid, fetchDiaryEntries]);
 
   return (
     <HStack

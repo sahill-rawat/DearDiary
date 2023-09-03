@@ -8,6 +8,8 @@ import Add from "./components/Add.jsx";
 import EditDiaryEntry from "./components/EditDiaryEntry";
 import Read from "./components/Read";
 import { Toaster } from "react-hot-toast";
+import MyProfile from "./components/MyProfile";
+import UpdatePassword from "./components/UpdatePassword";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Header />
         <Routes>
         <Route path='/add' element={<Add/>}/>
+        <Route path='/account' element={<MyProfile/>}/>
+        <Route path='/password' element={<UpdatePassword/>}/>
           <Route path='/diary' element={<Diary/>}/>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

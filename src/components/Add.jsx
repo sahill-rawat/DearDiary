@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { Box, Heading, Textarea, Button, VStack, Flex } from "@chakra-ui/react";
+import { Link, useNavigate } from "react-router-dom";
+import { Heading, Textarea, Button, VStack, Flex } from "@chakra-ui/react";
 import MetaData from "./Metadata";
 import { useStore } from "../Store";
 import { useAuth } from "../Auth";
@@ -8,7 +8,6 @@ import { toast } from "react-hot-toast";
 
 const Add = () => {
   const navigate = useNavigate();
-  const { entryId } = useParams();
   const { storeDiaryEntry } = useStore();
   const { currentUser } = useAuth();
 
@@ -40,10 +39,11 @@ const Add = () => {
     monthNames[date.getMonth()] +
     ", " +
     date.getFullYear().toString();
-  const [content, setContent] = useState();
+  const [content, setContent] = useState("");
 
-  const handleSaveClick = () => {
-    console.log("Edited Content:", content);
+  const handleSaveClick = (e) => {
+    e.preventDefault();
+    if (content.trim()) {
     storeDiaryEntry(currentUser.uid, title, content)
       .then(() => {
         navigate("/diary");
@@ -52,6 +52,8 @@ const Add = () => {
       .catch((error) => {
         toast.error(error.message);
       });
+    }
+    else    navigate("/diary");
   };
 
   return (

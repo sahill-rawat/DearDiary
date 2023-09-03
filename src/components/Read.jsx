@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Box, Heading, Text, Button, VStack, Flex, HStack } from "@chakra-ui/react";
+import { Heading, Text, Button, VStack, Flex, HStack } from "@chakra-ui/react";
+import { AiFillDelete, AiOutlineRollback, AiTwotoneEdit } from "react-icons/ai";
 import MetaData from "./Metadata";
 import { useStore } from "../Store";
 import { useAuth } from "../Auth";
 
 const Read = () => {
-
   const navigate = useNavigate();
   const { entryId } = useParams();
-  const  {currentUser} =  useAuth();
+  const { currentUser } = useAuth();
   const { entries, deleteDiaryEntry } = useStore([]);
-  const entry = entries.find((item)=> item.id === entryId);
+  const entry = entries.find((item) => item.id === entryId);
 
   const handleEditClick = () => {
     navigate(`/edit/${entryId}`);
@@ -19,29 +19,40 @@ const Read = () => {
 
   return (
     <VStack p="15vmin" borderWidth="1px" borderRadius="lg" boxShadow="lg">
-      <MetaData title={entry.title}/>
+      <MetaData title={entry.title} />
       <Flex
         h="10vh"
         justifyContent="space-between"
         alignItems="flex-start"
         w="100%"
-        mb='2vh'
+        mb="2vh"
       >
-        <Heading size='lg' mb={2}>
+        <Heading size="lg" mb={4}>
           {entry.title}
         </Heading>
         <HStack>
           <Link to="/diary" mt={2} display="block">
-            <Button bg="#FBCD44">Back</Button>
+            <Button bg="#FBCD44">
+              <AiOutlineRollback />
+            </Button>
           </Link>
           <Button bg="#FBCD44" variant="solid" onClick={handleEditClick}>
-            Edit
+            <AiTwotoneEdit />
           </Button>
-          <Link to="/diary" onClick={()=>deleteDiaryEntry(currentUser.uid, entryId)} > <Button color='white' bg="red.500"> Delete Entry</Button></Link>
-        </HStack >
+          <Link
+            to="/diary"
+            onClick={() => deleteDiaryEntry(currentUser.uid, entryId)}
+          >
+            {" "}
+            <Button color="white" bg="red.500">
+              {" "}
+              <AiFillDelete />{" "}
+            </Button>
+          </Link>
+        </HStack>
       </Flex>
 
-      <Text minH="68vh" alignSelf="flex-start">
+      <Text mt='5vh' fontWeight='medium' minH="68vh" alignSelf="flex-start">
         {entry.diaryEntry}
       </Text>
     </VStack>
