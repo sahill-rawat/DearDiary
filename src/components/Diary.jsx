@@ -16,51 +16,47 @@ import { useAuth } from "../Auth";
 import { VscAdd } from "react-icons/vsc";
 
 const Diary = () => {
-    const dates = [
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-        "January 26th, 2023",
-      ];
-  const { getEntries, entries } = useStore([]);
+
+  const [entries, setEntries] = useState([]);
+  const { fetchDiaryEntries } = useStore([]);
   const { currentUser } = useAuth();
-  const isSmallScreen = useBreakpointValue({ base: true, sm: false }); // Detect screen size
+  const isSmallScreen = useBreakpointValue({ base: true, sm: false });
 
   useEffect(() => {
-    // getEntries(currentUser).then(()=>{
-    //     console.log(entries);
-    // })
-  }, []);
+    const fetchEntries = async () => {
+      try {
+        const fetchedEntries = await fetchDiaryEntries(currentUser.uid);
+        setEntries(fetchedEntries);
+      } catch (error) {
+        console.error("Error fetching diary entries:", error);
+      }
+    };
+
+    fetchEntries();
+  }, [currentUser.uid]);
 
   return (
     <HStack
       align={"flex-start"}
-      justify="center"
       pt="10vh"
       minH="100vh"
       w="100vw"
       bg="#F1E4BA"
-      spacing={0} // Add spacing
+      spacing={0}
     >
       <MetaData title="Diary" />
 
       <Grid
-        maxW="70%"
+        ml='10vw'
+        w="70%"
         templateColumns={["repeat(2, 1fr)", "repeat(4, 1fr)", "repeat(6, 1fr)"]}
         gap="20px"
       >
-        {dates.map((date) => (
-          <Link to="/read" key={date}>
+        {entries.map((entry, index) => (
+          <Link to={`/read/${entry.id}`} key={entry.id}>
             <Box bg="#FBCD44" borderRadius="5" textAlign="center" p="1">
               <Text fontWeight="bold" color={"black"}>
-                {date}
+                {entry.title}
               </Text>
             </Box>
           </Link>

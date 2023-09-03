@@ -1,77 +1,131 @@
 import React, { useContext, useState, useEffect } from "react";
-import { collection, query, getDocs, where, addDoc } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  getDocs,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { auth, db } from "./firebase";
 
 const StoreContext = React.createContext();
 
 export const useStore = () => {
-    return useContext(StoreContext);
+  return useContext(StoreContext);
 };
 
 export const StoreProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
+  const [entries, setEntries] = useState([]);
 
-    const [currentUser, setCurrentUser] = useState();
-    const [loading, setLoading] = useState(true);
-    const [entries, setEntries] = useState([]);
+  const fetchDiaryEntries = async (userUID) => {
+    try {
+      const diaryEntriesCollectionRef = collection(
+        db,
+        "users",
+        userUID,
+        "diaryEntries"
+      );
 
-    const getEntries = async (user) => {
-        try {
-          // Create a reference to the "diaryEntries" subcollection for the user
-          const entriesCollectionRef = collection(db, 'users');
-      
-          // Create a query to get all entries in the subcollection
-          const entriesQuery = query(entriesCollectionRef);
-      
-          // Execute the query and get the snapshot of entries
-          const entriesSnapshot = await getDocs(entriesQuery);
-      
-          // Initialize an array to store the entries
-          const entries = [];
-      
-          // Loop through the entries snapshot and extract the data
-          entriesSnapshot.forEach((doc) => {
-            const entryData = doc.data();
-            entries.push(entryData);
-          });
-          setEntries(entries);
-          return entries;
-        } catch (error) {
-          console.error('Error fetching diary entries:', error);
-          throw error;
-        }
+      // Query the subcollection to get all entries for the authenticated user
+      const q = query(diaryEntriesCollectionRef);
+
+      const querySnapshot = await getDocs(q);
+
+      const entries = [];
+      querySnapshot.forEach((doc) => {
+        entries.push({ id: doc.id, ...doc.data() });
+      });
+      setEntries(entries);
+      return entries;
+    } catch (error) {
+      console.error("Error fetching diary entries:", error);
+      throw error;
+    }
+  };
+
+  const storeDiaryEntry = async (userUID, title, diaryEntry) => {
+    try {
+      // Create a reference to the "diaryEntries" subcollection under the user's document
+      const diaryEntriesCollectionRef = collection(
+        db,
+        "users",
+        userUID,
+        "diaryEntries"
+      );
+
+      // Create an object that contains both the title and diaryEntry
+      const entryData = {
+        title: title,
+        date: new Date().getTime(),
+        diaryEntry: diaryEntry,
       };
 
-      const storeDiaryEntry = async (userUID, diaryEntry) => {
-        try {
-          // Create a reference to the "diaryEntries" subcollection under the user's document
-          const diaryEntriesCollectionRef = collection(db, 'users', userUID, 'diaryEntries');
-      
-          // Add the diary entry to the subcollection
-          await addDoc(diaryEntriesCollectionRef, diaryEntry);
-      
-          console.log('Diary entry stored successfully.');
-        } catch (error) {
-          console.error('Error storing diary entry:', error);
-          throw error;
-        }
-      };
+      // Add the entryData object to the subcollection
+      await addDoc(diaryEntriesCollectionRef, entryData);
 
-    useEffect(() => {
-        //returns function through which we can unsubscribe from onAuthStateChanged event
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            setCurrentUser(user);
-            setLoading(false);
-        });
-        return unsubscribe;
-    }, []);
+      console.log("Diary entry stored successfully.");
+    } catch (error) {
+      console.error("Error storing diary entry:", error);
+      throw error;
+    }
+  };
 
-    const value = {
-        currentUser,
-        getEntries
-    };
-    return (
-        <StoreContext.Provider value={value}>
-            {!loading && children}
-        </StoreContext.Provider>
-    );
+  async function updateDiaryEntry(userUID, entryId, updatedData) {
+    try {
+      // Create a reference to the specific document to update
+      const entryRef = doc(db, "users", userUID, "diaryEntries", entryId);
+
+      // Update the document with the new data
+      await updateDoc(entryRef, updatedData).then(() =>
+        fetchDiaryEntries(currentUser.uid)
+      );
+
+      console.log("Diary entry updated successfully.");
+    } catch (error) {
+      console.error("Error updating diary entry:", error);
+      throw error;
+    }
+  }
+
+  async function deleteDiaryEntry(userUID, entryId) {
+    try {
+      // Create a reference to the specific document to delete
+      const entryRef = doc(db, "users", userUID, "diaryEntries", entryId);
+
+      // Delete the document
+      await deleteDoc(entryRef);
+
+      console.log("Diary entry deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting diary entry:", error);
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    //returns function through which we can unsubscribe from onAuthStateChanged event
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
+
+  const value = {
+    currentUser,
+    entries,
+    fetchDiaryEntries,
+    storeDiaryEntry,
+    updateDiaryEntry,
+    deleteDiaryEntry,
+  };
+  return (
+    <StoreContext.Provider value={value}>
+      {!loading && children}
+    </StoreContext.Provider>
+  );
 };

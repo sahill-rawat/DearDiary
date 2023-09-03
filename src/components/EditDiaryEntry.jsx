@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Box, Heading, Textarea, Button, VStack, Flex } from '@chakra-ui/react';
+import { Textarea, Button, VStack, Flex } from '@chakra-ui/react';
 import MetaData from './Metadata';
+import { useStore } from '../Store';
+import { useAuth } from '../Auth';
+import { toast } from 'react-hot-toast';
 
 const EditDiaryEntry = () => {
   const navigate = useNavigate();
-  const { entryId } = useParams(); // Assuming you have a route parameter for entryId
-
-  // Sample diary entry content
-  const initialContent = 'This is the content of my diary entry...';
-  const [content, setContent] = useState(initialContent);
+  const { entryId } = useParams();
+  const {entries, updateDiaryEntry, deleteDiaryEntry} = useStore();
+  const entry = entries.find((item)=> item.id === entryId);
+  const [content, setContent] = useState(entry.diaryEntry);
+  const { currentUser } = useAuth();
 
   const handleSaveClick = () => {
-    console.log('Edited Content:', content);
+    const updatedData = {
+      diaryEntry: content,
+    };
+
+    updateDiaryEntry(currentUser.uid, entryId, updatedData);
     navigate(`/read/${entryId}`);
+    toast.success('Updated!');
   };
 
   return (
@@ -33,7 +41,7 @@ const EditDiaryEntry = () => {
         <Button colorScheme='green' onClick={handleSaveClick}>
         Save
       </Button>
-        <Link to="/diary"> <Button color='white' bg="red.500"> Delete Entry</Button></Link>
+        <Link to="/diary" onClick={()=>deleteDiaryEntry(currentUser.uid, entryId)} > <Button color='white' bg="red.500"> Delete Entry</Button></Link>
       </Flex>
     </VStack>
   );

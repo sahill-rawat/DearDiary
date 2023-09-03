@@ -1,25 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Box, Heading, Text, Button, VStack, Flex, HStack } from "@chakra-ui/react";
 import MetaData from "./Metadata";
+import { useStore } from "../Store";
+import { useAuth } from "../Auth";
 
 const Read = () => {
-  const navigate = useNavigate();
-  const { entryId } = useParams(); // Assuming you have a route parameter for entryId
 
-  const diaryEntry = {
-    id: entryId,
-    date: "January 26th, 2023",
-    content: "This is the content of my diary entry...",
-  };
+  const navigate = useNavigate();
+  const { entryId } = useParams();
+  const  {currentUser} =  useAuth();
+  const { entries, deleteDiaryEntry } = useStore([]);
+  const entry = entries.find((item)=> item.id === entryId);
 
   const handleEditClick = () => {
-    navigate(`/edit`);
+    navigate(`/edit/${entryId}`);
   };
 
   return (
     <VStack p="15vmin" borderWidth="1px" borderRadius="lg" boxShadow="lg">
-      <MetaData title={diaryEntry.date}/>
+      <MetaData title={entry.title}/>
       <Flex
         h="10vh"
         justifyContent="space-between"
@@ -28,7 +28,7 @@ const Read = () => {
         mb='2vh'
       >
         <Heading size='lg' mb={2}>
-          {diaryEntry.date}
+          {entry.title}
         </Heading>
         <HStack>
           <Link to="/diary" mt={2} display="block">
@@ -37,11 +37,12 @@ const Read = () => {
           <Button bg="#FBCD44" variant="solid" onClick={handleEditClick}>
             Edit
           </Button>
+          <Link to="/diary" onClick={()=>deleteDiaryEntry(currentUser.uid, entryId)} > <Button color='white' bg="red.500"> Delete Entry</Button></Link>
         </HStack >
       </Flex>
 
       <Text minH="68vh" alignSelf="flex-start">
-        {diaryEntry.content}
+        {entry.diaryEntry}
       </Text>
     </VStack>
   );
