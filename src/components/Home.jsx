@@ -7,6 +7,7 @@ import { getAuth } from 'firebase/auth';
 
 const Home = () => {
   const {currentUser} = getAuth();
+  console.log(currentUser);
   return (
     <Box h='100vh' w="100vw">
       <MetaData title='DearDiary' />
@@ -26,7 +27,7 @@ const Home = () => {
             <Text fontSize="2xl">Write Anywhere. Read Anytime.</Text>
         
             <VStack mt='5vh'>
-              <Link to={{currentUser} ? '/diary' : '/signup'}>
+            <Link to={currentUser ? '/diary' : '/signup'}>
               <Button
                 variant={"solid"}
                 color="white"
