@@ -5,13 +5,11 @@ import MetaData from './Metadata';
 import { Link } from 'react-router-dom';
 import { useStore } from '../Store';
 import { useAuth } from '../Auth';
-import { useSelector } from 'react-redux';
 
 const Home = () => {
 
   const {currentUser} = useAuth();
   const {fetchDiaryEntries} = useStore();
-  const entries = useSelector((state) => state.entries);
   
   useEffect(()=> {
     window.scrollTo(0, 0);

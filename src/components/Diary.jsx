@@ -12,7 +12,6 @@ import MetaData from "./Metadata";
 import { useStore } from "../Store";
 import { useAuth } from "../Auth";
 import { VscAdd } from "react-icons/vsc";
-import { useSelector } from "react-redux";
 
 const Diary = () => {
 

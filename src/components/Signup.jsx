@@ -12,6 +12,7 @@ import {
   import MetaData from './Metadata';
   import { useAuth } from '../Auth';
 import { toast } from "react-hot-toast";
+import ColorModeSwitcher from "../ColorModeSwitcher";
 
   const Signup = () => {
 
@@ -40,6 +41,7 @@ import { toast } from "react-hot-toast";
   
     return (
       <Container maxW={"container.xl"} h={"100vh"} p={"16"}>
+        <ColorModeSwitcher />
         <MetaData title='Signup'/>
         <form>
           <VStack
