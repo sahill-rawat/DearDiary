@@ -36,7 +36,6 @@ import { toast } from "react-hot-toast";
  
     useEffect(() => {
       window.scrollTo(0, 0);
-      
     }, []);
   
     return (

@@ -12,14 +12,17 @@ import MetaData from "./Metadata";
 import { useStore } from "../Store";
 import { useAuth } from "../Auth";
 import { VscAdd } from "react-icons/vsc";
+import { useSelector } from "react-redux";
 
 const Diary = () => {
 
   const [entries, setEntries] = useState([]);
   const { fetchDiaryEntries } = useStore([]);
   const { currentUser } = useAuth();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchEntries = async () => {
       try {
         const fetchedEntries = await fetchDiaryEntries(currentUser.uid);
@@ -29,7 +32,7 @@ const Diary = () => {
       }
     };
 
-    fetchEntries();
+    if (entries.length === 0) fetchEntries();
   }, [currentUser.uid, fetchDiaryEntries]);
 
   return (

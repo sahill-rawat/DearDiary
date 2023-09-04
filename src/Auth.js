@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { auth } from "./firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updatePassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, reauthenticateWithCredential, updatePassword, updateProfile } from 'firebase/auth';
 import { toast } from "react-hot-toast";
 
 const AuthContext = React.createContext();
@@ -13,15 +13,27 @@ export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState();
     const [loading, setLoading] = useState(true);
 
-     const changePassword = (password) => {
+    const changePassword = async (currPassword, newPassword) => {
         const user = auth.currentUser;
-        if (!user)    return toast.error('User must be logged in.');
-        updatePassword(user, password).then(() => {
+    
+        if (!user) {
+            return toast.error('User must be logged in.');
+        }
+    
+        try {
+            // Reauthenticate the user first
+            const cred = auth.EmailAuthProvider.credential(user.email, currPassword);
+            await user.reauthenticateWithCredential(cred);
+    
+            // If reauthentication is successful, update the password
+            await user.updatePassword(newPassword);
+            
             toast.success('Password Updated Successfully!');
-          }).catch((error) => {
+        } catch (error) {
             toast.error(error.message);
-          });
-     }
+        }
+    }
+    
 
     const updateName = (name) => {
         updateProfile(auth.currentUser, {

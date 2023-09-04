@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Button, VStack, Text, Heading } from "@chakra-ui/react";
 import bg from '../images/back.jpg';
 import MetaData from './Metadata';
 import { Link } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
+import { useStore } from '../Store';
+import { useAuth } from '../Auth';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
-  const {currentUser} = getAuth();
-  console.log(currentUser);
+
+  const {currentUser} = useAuth();
+  const {fetchDiaryEntries} = useStore();
+  const entries = useSelector((state) => state.entries);
+  
+  useEffect(()=> {
+    window.scrollTo(0, 0);
+    if (currentUser) {
+      fetchDiaryEntries(currentUser.uid);
+    }
+    
+  });
   return (
     <Box h='100vh' w="100vw">
       <MetaData title='DearDiary' />

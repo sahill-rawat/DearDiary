@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Heading, Textarea, Button, VStack, Flex } from "@chakra-ui/react";
 import MetaData from "./Metadata";
 import { useStore } from "../Store";
 import { useAuth } from "../Auth";
 import { toast } from "react-hot-toast";
+import ColorModeSwitcher from "../ColorModeSwitcher";
 
 const Add = () => {
   const navigate = useNavigate();
@@ -56,6 +57,8 @@ const Add = () => {
     else    navigate("/diary");
   };
 
+  useEffect(()=> window.scrollTo(0, 0));
+
   return (
     <VStack
       minH="100vh"
@@ -64,13 +67,14 @@ const Add = () => {
       borderRadius="lg"
       boxShadow="lg"
     >
+      <ColorModeSwitcher/>
       <MetaData title={"Edit"} />
 
       <Flex justifyContent="space-between" w="95vw">
         <Link to={`/diary`}>
           <Button>Cancel</Button>{" "}
         </Link>
-        <Heading>{title}</Heading>
+        <Heading textAlign={'center'}>{title}</Heading>
         <Button colorScheme="green" onClick={handleSaveClick}>
           Save
         </Button>

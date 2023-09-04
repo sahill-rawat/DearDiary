@@ -1,24 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heading, Text, Button, VStack, Flex, HStack } from "@chakra-ui/react";
 import { AiFillDelete, AiOutlineRollback, AiTwotoneEdit } from "react-icons/ai";
 import MetaData from "./Metadata";
 import { useStore } from "../Store";
 import { useAuth } from "../Auth";
+import Loader from "./Loader";
+import { toast } from "react-hot-toast";
+import ColorModeSwitcher from "../ColorModeSwitcher";
 
 const Read = () => {
   const navigate = useNavigate();
   const { entryId } = useParams();
+  const {
+    entries,
+    deleteDiaryEntry,
+    fetchDiaryEntries,
+  } = useStore();
+  const [entry, setEntry] = useState('');
   const { currentUser } = useAuth();
-  const { entries, deleteDiaryEntry } = useStore([]);
-  const entry = entries.find((item) => item.id === entryId);
+  const [loading, setLoading] = useState(false);
+
+  const fetchEntries = async () => {
+    try {
+      setLoading(true);
+      const fetchedEntries = await fetchDiaryEntries(currentUser.uid);
+      setLoading(false);
+    } catch (error) {
+      toast.error('Error fetching diary entries');
+    }
+  };
+
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (entries.length === 0) {
+      fetchEntries();
+    } else {
+      const entry = entries.find((item) => item.id === entryId);
+      if (entry) {
+        setEntry(entry);
+      }
+    }
+  }, [currentUser.uid, entryId, entries]);
 
   const handleEditClick = () => {
     navigate(`/edit/${entryId}`);
   };
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <VStack p="15vmin" borderWidth="1px" borderRadius="lg" boxShadow="lg">
+      <ColorModeSwitcher/>
       <MetaData title={entry.title} />
       <Flex
         h="10vh"
@@ -52,7 +86,7 @@ const Read = () => {
         </HStack>
       </Flex>
 
-      <Text mt='5vh' fontWeight='medium' minH="68vh" alignSelf="flex-start">
+      <Text mt="5vh" fontWeight="medium" minH="68vh" alignSelf="flex-start">
         {entry.diaryEntry}
       </Text>
     </VStack>

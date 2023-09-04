@@ -17,6 +17,7 @@ export const useStore = () => {
 };
 
 export const StoreProvider = ({ children }) => {
+    
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState([]);
