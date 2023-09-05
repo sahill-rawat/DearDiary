@@ -18,7 +18,16 @@ import ColorModeSwitcher from '../ColorModeSwitcher';
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, resetPassword } = useAuth();
+
+    const handleForgetPassword = (e) => {
+      e.preventDefault();
+      if (email.trim() === "")  toast.error('Enter the email first');
+      else {
+        resetPassword(email);
+        toast.success("Reset Email sent. Check your mail!");
+      }
+    }
   
   
     const loginSubmit = (e) => {
@@ -65,8 +74,8 @@ import ColorModeSwitcher from '../ColorModeSwitcher';
             onChange={(e)=>setPassword(e.target.value)}
           />
   
-          <Button variant={'link'} alignSelf={'flex-end'}>
-            <Link to={'/forgetpassword'}>Forget Password?</Link>
+          <Button variant={'link'} alignSelf={'flex-end'} onClick={handleForgetPassword}>
+            <Link>Forget Password?</Link>
           </Button>
   
           <Button bg='#FBCD44' type={'submit'} onClick={loginSubmit} >
